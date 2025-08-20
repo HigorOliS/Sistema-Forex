@@ -1,71 +1,121 @@
 import streamlit as st
 import pandas as pd
+import random
 
-# Configuração da página
-st.set_page_config(page_title="LucroCerto FX", layout="centered", page_icon="💰")
+# ==============================
+# CONFIGURAÇÃO DA PÁGINA
+# ==============================
+st.set_page_config(page_title="LucroCerto FX", layout="centered")
 
-# Definições de estilo (tema preto e dourado)
+# Estilo customizado com CSS
 st.markdown("""
     <style>
-    body {
-        background-color: #000000;
-        color: #FFD700;
-    }
-    .stButton button {
-        background-color: #FFD700;
-        color: #000000;
-        font-weight: bold;
-        border-radius: 10px;
-        padding: 10px 20px;
-    }
-    .logo {
-        text-align: center;
-        margin-top: 100px;
-        margin-bottom: 50px;
-    }
+        .main {
+            background-color: #000000;
+            color: #FFD700;
+        }
+        .title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+        .stButton button {
+            background-color: #FFD700;
+            color: #000000;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 100%;
+        }
+        .buy {
+            color: #00FF00;
+            font-weight: bold;
+        }
+        .sell {
+            color: #FF0000;
+            font-weight: bold;
+        }
+        .section {
+            margin-top: 40px;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# Inicializa session_state
-if "show_results" not in st.session_state:
-    st.session_state.show_results = False
+# ==============================
+# TELA 1
+# ==============================
+if "page" not in st.session_state:
+    st.session_state.page = "home"
 
-# Funções auxiliares
-def gerar_sinais():
-    # Aqui depois vamos conectar à IA real
-    dados = {
-        "Par": ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD"],
-        "Horário": ["10:32:15", "06:15:45", "22:47:30", "04:12:59", "21:03:12"],
-        "Ação": ["Buy", "Sell", "Buy", "Sell", "Buy"],
-        "Probabilidade (%)": [92, 89, 94, 90, 91]
-    }
-    return pd.DataFrame(dados)
+if st.session_state.page == "home":
+    st.markdown("<div class='title'>💹 LucroCerto FX</div>", unsafe_allow_html=True)
+    st.markdown("<div class='subtitle'>Seu assistente inteligente para Forex</div>", unsafe_allow_html=True)
 
-def dicas_horarios():
+    # Caixa de texto
+    user_input = st.text_area(
+        "Otimize sua análise com IA:",
+        placeholder="Descreva o cenário do gráfico (ex.: tendência, rompimento, suporte/resistência)",
+        height=100
+    )
+
+    # Upload do print (opcional)
+    uploaded_file = st.file_uploader("Envie um print do gráfico (opcional):", type=["png", "jpg", "jpeg"])
+
+    if st.button("🚀 Gerar Sinais com IA"):
+        st.session_state.page = "result"
+        st.session_state.user_input = user_input
+
+# ==============================
+# TELA 2
+# ==============================
+elif st.session_state.page == "result":
+    st.markdown("<div class='title'>📊 Resultados da Análise</div>", unsafe_allow_html=True)
+
+    # Gerando sinais fictícios
+    pares = ["EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF", "AUD/USD"]
+    horarios = ["10:32:15", "11:15:47", "14:05:30", "16:45:10", "19:20:05"]
+    acoes = ["Comprar", "Vender"]
+
+    data = []
+    for par, h in zip(pares, horarios):
+        acao = random.choice(acoes)
+        prob = random.randint(85, 98)
+        data.append([par, h, acao, prob])
+
+    df = pd.DataFrame(data, columns=["Par", "Horário", "Ação", "Probabilidade (%)"])
+
+    # Estilizando tabela
+    def color_action(val):
+        if val == "Comprar":
+            return "color: #00FF00; font-weight: bold;"
+        elif val == "Vender":
+            return "color: #FF0000; font-weight: bold;"
+        return ""
+
+    st.dataframe(df.style.map(color_action, subset=["Ação"]))
+
+    # Dicas
+    st.markdown("<div class='section'><h3>💡 Dicas de Horários</h3></div>", unsafe_allow_html=True)
     st.markdown("""
-    ### 💡 Dicas de Horários
-    - **EUR/USD** → Mais preciso entre **10:00 e 12:00** (GMT-3).  
-    - **GBP/USD** → Movimentos fortes entre **05:30 e 07:00**.  
-    - **USD/JPY** → Boa volatilidade entre **22:00 e 23:30**.  
-    - **AUD/USD** → Melhor liquidez às **21:00** (abertura Sydney).  
-    - **USD/CHF** → Melhor momento entre **04:00 e 06:00**.  
+    • EUR/USD → Mais preciso entre 10:00 e 12:00  
+    • GBP/USD → Movimentos fortes entre 05:30 e 07:00  
+    • USD/JPY → Melhor análise entre 21:00 e 23:00  
+    • AUD/USD → Alta liquidez entre 22:00 e 00:00  
+    • USD/CHF → Mais previsível entre 09:00 e 11:00  
     """)
 
-# Tela inicial
-if not st.session_state.show_results:
-    st.markdown('<div class="logo"><h1>💰 LucroCerto FX</h1></div>', unsafe_allow_html=True)
-    if st.button("Buscar Sinais"):
-        st.session_state.show_results = True
-        st.rerun()
+    # Comentário do usuário
+    if st.session_state.user_input.strip() != "":
+        st.markdown("<div class='section'><h3>💡 Comentário da sua Análise</h3></div>", unsafe_allow_html=True)
+        st.success(st.session_state.user_input)
 
-# Tela de resultados
-else:
-    st.title("📊 Resultados da Análise")
-    tabela = gerar_sinais()
-    st.table(tabela)
-
-    if st.button("🔄 Nova Busca"):
-        st.session_state.show_results = False
-        st.rerun()
-
-    dicas_horarios()
+    # Botão de reinício
+    if st.button("🔄 Nova Análise"):
+        st.session_state.page = "home"
