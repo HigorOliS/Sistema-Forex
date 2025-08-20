@@ -18,7 +18,7 @@ if st.session_state["tela"] == "inicio":
     st.write("")
 
     # Botão de gerar sinais
-    if st.button("<h1 style='text-align: center;'>🚀 Gerar sinais com IA", use_container_width=True):
+    if st.button("🚀 Gerar sinais com IA", use_container_width=True):
         st.session_state["tela"] = "resultado"
         st.rerun()
 
