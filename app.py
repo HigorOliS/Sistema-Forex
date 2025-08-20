@@ -45,7 +45,7 @@ elif st.session_state["tela"] == "resultado":
     dados = {
         "Par de moedas": ["EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF", "AUD/USD"],
         "Horário sugerido": ["10:30:15", "11:45:30", "13:15:45", "15:20:10", "17:50:05"],
-        "Ação": ["Comprar", "Vender", "Comprar", "Vender", "Comprar"],
+        "Ação": ["Vender", "Comprar", "Vender", "Vender", "Comprar"],
         "Probabilidade(%)": [92, 96, 94, 90, 91]
     }
     df = pd.DataFrame(dados)
