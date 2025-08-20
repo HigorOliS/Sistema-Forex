@@ -1,121 +1,84 @@
 import streamlit as st
 import pandas as pd
-import random
 
-# ==============================
-# CONFIGURAÇÃO DA PÁGINA
-# ==============================
 st.set_page_config(page_title="LucroCerto FX", layout="centered")
 
-# Estilo customizado com CSS
-st.markdown("""
-    <style>
-        .main {
-            background-color: #000000;
-            color: #FFD700;
-        }
-        .title {
-            text-align: center;
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .subtitle {
-            text-align: center;
-            font-size: 20px;
-            margin-top: 10px;
-            margin-bottom: 30px;
-        }
-        .stButton button {
-            background-color: #FFD700;
-            color: #000000;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 10px;
-            width: 100%;
-        }
-        .buy {
-            color: #00FF00;
-            font-weight: bold;
-        }
-        .sell {
-            color: #FF0000;
-            font-weight: bold;
-        }
-        .section {
-            margin-top: 40px;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# =========================
+# TELA 1 - Entrada do Usuário
+# =========================
+if "tela" not in st.session_state:
+    st.session_state["tela"] = "inicio"
+    st.session_state["comentario_usuario"] = ""
 
-# ==============================
-# TELA 1
-# ==============================
-if "page" not in st.session_state:
-    st.session_state.page = "home"
+if st.session_state["tela"] == "inicio":
+    st.markdown("<h1 style='text-align: center; color: gold;'>💹 LucroCerto FX</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Seu aliado no Forex com IA ⚡</h3>", unsafe_allow_html=True)
 
-if st.session_state.page == "home":
-    st.markdown("<div class='title'>💹 LucroCerto FX</div>", unsafe_allow_html=True)
-    st.markdown("<div class='subtitle'>Seu assistente inteligente para Forex</div>", unsafe_allow_html=True)
+    st.write("")
+    st.write("")
 
-    # Caixa de texto
-    user_input = st.text_area(
-        "Otimize sua análise com IA:",
-        placeholder="Descreva o cenário do gráfico (ex.: tendência, rompimento, suporte/resistência)",
-        height=100
+    # Botão de gerar sinais
+    if st.button("🚀 Gerar sinais com IA", use_container_width=True):
+        st.session_state["tela"] = "resultado"
+        st.rerun()
+
+    st.write("---")
+
+    # Upload do print
+    uploaded_file = st.file_uploader("📷 Envie um print do gráfico (opcional)", type=["png", "jpg", "jpeg"])
+
+    # Caixa de texto para otimizar análise
+    comentario = st.text_area(
+        "📝 Otimize a análise com sua descrição",
+        placeholder="*Pode detalhar o cenário do gráfico (ex.: tendência, rompimento, suporte/resistência)..."
     )
+    if comentario:
+        st.session_state["comentario_usuario"] = comentario
 
-    # Upload do print (opcional)
-    uploaded_file = st.file_uploader("Envie um print do gráfico (opcional):", type=["png", "jpg", "jpeg"])
+# =========================
+# TELA 2 - Resultados
+# =========================
+elif st.session_state["tela"] == "resultado":
+    st.markdown("<h2 style='text-align: center;'>📊 Resultados da análise</h2>", unsafe_allow_html=True)
 
-    if st.button("🚀 Gerar Sinais com IA"):
-        st.session_state.page = "result"
-        st.session_state.user_input = user_input
+    # Simulação de sinais
+    dados = {
+        "Par de moedas": ["EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF", "AUD/USD"],
+        "Horário sugerido": ["10:30:15", "11:45:30", "13:15:45", "15:20:10", "17:50:05"],
+        "Ação": ["Comprar", "Vender", "Comprar", "Vender", "Comprar"],
+        "Probabilidade de acerto (%)": [92, 89, 94, 90, 91]
+    }
+    df = pd.DataFrame(dados)
 
-# ==============================
-# TELA 2
-# ==============================
-elif st.session_state.page == "result":
-    st.markdown("<div class='title'>📊 Resultados da Análise</div>", unsafe_allow_html=True)
-
-    # Gerando sinais fictícios
-    pares = ["EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF", "AUD/USD"]
-    horarios = ["10:32:15", "11:15:47", "14:05:30", "16:45:10", "19:20:05"]
-    acoes = ["Comprar", "Vender"]
-
-    data = []
-    for par, h in zip(pares, horarios):
-        acao = random.choice(acoes)
-        prob = random.randint(85, 98)
-        data.append([par, h, acao, prob])
-
-    df = pd.DataFrame(data, columns=["Par", "Horário", "Ação", "Probabilidade (%)"])
-
-    # Estilizando tabela
-    def color_action(val):
+    # Estilizar tabela (verde para comprar, vermelho para vender)
+    def colorir_acoes(val):
         if val == "Comprar":
-            return "color: #00FF00; font-weight: bold;"
+            return "color: green; font-weight: bold;"
         elif val == "Vender":
-            return "color: #FF0000; font-weight: bold;"
+            return "color: red; font-weight: bold;"
         return ""
 
-    st.dataframe(df.style.map(color_action, subset=["Ação"]))
+    st.dataframe(df.style.applymap(colorir_acoes, subset=["Ação"]), use_container_width=True)
 
-    # Dicas
-    st.markdown("<div class='section'><h3>💡 Dicas de Horários</h3></div>", unsafe_allow_html=True)
+    # Dicas de horários
+    st.markdown("### 💡 Dicas de horários ideais")
     st.markdown("""
-    • EUR/USD → Mais preciso entre 10:00 e 12:00  
-    • GBP/USD → Movimentos fortes entre 05:30 e 07:00  
-    • USD/JPY → Melhor análise entre 21:00 e 23:00  
-    • AUD/USD → Alta liquidez entre 22:00 e 00:00  
-    • USD/CHF → Mais previsível entre 09:00 e 11:00  
+    - **EUR/USD** → Mais previsível entre **10h e 12h**  
+    - **USD/JPY** → Melhor entre **22h e 02h**  
+    - **GBP/USD** → Alta volatilidade entre **09h e 11h**  
+    - **USD/CHF** → Estável entre **15h e 17h**  
+    - **AUD/USD** → Oportunidades entre **20h e 23h**
     """)
 
-    # Comentário do usuário
-    if st.session_state.user_input.strip() != "":
-        st.markdown("<div class='section'><h3>💡 Comentário da sua Análise</h3></div>", unsafe_allow_html=True)
-        st.success(st.session_state.user_input)
+    # Comentário do usuário (se houver)
+    if st.session_state["comentario_usuario"]:
+        st.markdown("### 💡 Comentário da sua análise")
+        st.info(st.session_state["comentario_usuario"])
 
-    # Botão de reinício
-    if st.button("🔄 Nova Análise"):
-        st.session_state.page = "home"
+    st.write("---")
+
+    # Botão para nova análise
+    if st.button("🔄 Nova análise", use_container_width=True):
+        st.session_state["tela"] = "inicio"
+        st.session_state["comentario_usuario"] = ""
+        st.rerun()
