@@ -18,7 +18,7 @@ if st.session_state["tela"] == "inicio":
     st.write("")
 
     # Botão de gerar sinais
-    if st.button("🚀 Gerar sinais com IA", use_container_width=True):
+    if st.button("<h1 style='text-align: center;'>🚀 Gerar sinais com IA", use_container_width=True):
         st.session_state["tela"] = "resultado"
         st.rerun()
 
@@ -46,7 +46,7 @@ elif st.session_state["tela"] == "resultado":
         "Par de moedas": ["EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF", "AUD/USD"],
         "Horário sugerido": ["10:30:15", "11:45:30", "13:15:45", "15:20:10", "17:50:05"],
         "Ação": ["Comprar", "Vender", "Comprar", "Vender", "Comprar"],
-        "Probabilidade (%)": [92, 96, 94, 90, 91]
+        "Probabilidade(%)": [92, 96, 94, 90, 91]
     }
     df = pd.DataFrame(dados)
 
