@@ -29,7 +29,7 @@ if st.session_state["tela"] == "inicio":
 
     # Caixa de texto para otimizar análise
     comentario = st.text_area(
-        "📝 Otimize a análise com sua descrição",
+        "📝 Otimize a análise com sua descrição (opcional)",
         placeholder="*Pode detalhar o cenário do gráfico (ex.: tendência, rompimento, suporte/resistência)..."
     )
     if comentario:
