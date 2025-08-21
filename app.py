@@ -62,7 +62,7 @@ if st.button("✅ Gerar Análise"):
             '<span style="color:red">Vender</span>',
             '<span style="color:green">Comprar</span>'
         ],
-        "% Acerto": [92, 89, 94, 90, 91]
+        "% WIN": [92, 89, 94, 90, 91]
     }
     
     df = pd.DataFrame(data)
