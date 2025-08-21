@@ -7,7 +7,7 @@ st.markdown(
     f"""
     <style>
     .stApp {{
-        background-image: url("https://github.com/HigorOliS/Sistema-Forex/blob/main/IMG_3894.jpeg");
+        background-image: url("https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
