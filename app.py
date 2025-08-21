@@ -29,7 +29,7 @@ if st.session_state["tela"] == "inicio":
 
     # Caixa de texto para otimizar análise
     comentario = st.text_area(
-        "📝 Otimize a análise com sua descrição (opcional)",
+        "📝 Otimize a análise com sua descrição",
         placeholder="*Pode detalhar o cenário do gráfico (ex.: tendência, rompimento, suporte/resistência)..."
     )
     if comentario:
@@ -45,8 +45,8 @@ elif st.session_state["tela"] == "resultado":
     dados = {
         "Par de moedas": ["EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF", "AUD/USD"],
         "Horário sugerido": ["10:30:15", "11:45:30", "13:15:45", "15:20:10", "17:50:05"],
-        "Ação": ["Vender", "Comprar", "Vender", "Vender", "Comprar"],
-        "(%)": [92, 96, 94, 90, 91]
+        "Ação": ["Comprar", "Vender", "Comprar", "Vender", "Comprar"],
+        "Probabilidade de acerto (%)": [92, 89, 94, 90, 91]
     }
     df = pd.DataFrame(dados)
 
