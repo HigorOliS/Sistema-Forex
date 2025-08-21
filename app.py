@@ -15,7 +15,6 @@ img_url = "https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_38
 try:
     response = requests.get(img_url)
     img = Image.open(BytesIO(response.content))
-    st.image(img, caption="Gráfico carregado do GitHub")
 except Exception as e:
     st.error(f"Erro ao carregar a imagem: {e}")
 
