@@ -1,8 +1,14 @@
-
 import streamlit as st
 import pandas as pd
-
+import requests
+from PIL import Image
+from io import BytesIO
 # Configuração do background
+
+response = requests.get(img_url)
+img = Image.open(BytesIO(response.content))
+
+st.image(img, caption="Gráfico carregado do GitHub")
 st.markdown(
     f"""
     <style>
