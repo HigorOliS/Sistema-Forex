@@ -17,9 +17,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("📊 LucroCerto FX")
+st.title("💹 LucroCerto FX")
 
-st.header("Otimize sua Análise")
+st.header("💡Otimize sua Análise")
 uploaded_file = st.file_uploader("📤 Envie um print do gráfico da IQ Option")
 user_text = st.text_area("✍️ Detalhe aqui sua análise ou observações")
 
