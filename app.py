@@ -50,7 +50,7 @@ user_text = st.text_area("✍️ Detalhe aqui sua análise ou observações")
 # ---------------------------
 # Botão para gerar análise
 # ---------------------------
-if st.button("✅Gerar Análise"):
+if st.button("✅ Gerar Análise"):
     # Dados de exemplo
     data = {
         "Par": ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD"],
