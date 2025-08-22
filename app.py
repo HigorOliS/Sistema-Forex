@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-import requests
-from io import BytesIO
 
 # ---------------------------
 # Configuração da página
@@ -11,87 +9,77 @@ st.set_page_config(
     page_title="LucroCerto FX",
     page_icon="💹",
     layout="wide",
-    initial_sidebar_state="expanded"
 )
 
 # ---------------------------
-# Estilo customizado (preto/dourado)
+# Estilo da página com imagem de fundo
 # ---------------------------
-st.markdown("""
-    <style>
-        body {
-            background-color: #000000;
-            color: #FFD700;
-        }
-        .stButton>button {
-            background-color: #FFD700;
-            color: #000000;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# ---------------------------
-# Função placeholder de IA para calcular acerto
-# ---------------------------
-def calcular_acerto(candle_image=None):
-    return 90  # Exemplo fixo
-
-# ---------------------------
-# Função para colorir Comprar/Vender
-# ---------------------------
-def color_action(val):
-    color = 'green' if val == "Comprar" else 'red'
-    return f'background-color: {color}; color: black; font-weight: bold'
+page_bg = """
+<style>
+.stApp {
+    background: url("https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #FFD700;
+}
+[data-testid="stHeader"] {
+    background: rgba(0,0,0,0.6);
+}
+[data-testid="stSidebar"] {
+    background: rgba(0,0,0,0.8);
+}
+.block-container {
+    background: rgba(0,0,0,0.7);
+    padding: 2rem;
+    border-radius: 10px;
+}
+</style>
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
 
 # ---------------------------
 # Cabeçalho
 # ---------------------------
-st.title("📊 LucroCerto FX - Scalping")
-st.subheader("Tabela de sinais com Acerto (%)")
+st.title("💹 LucroCerto FX")
+st.markdown("### 🚀 Scalping de Alta Precisão em Forex")
 
 # ---------------------------
-# Upload e observações do usuário
+# Upload e observações
 # ---------------------------
-st.subheader("📤 Envie seu gráfico ou observações")
 uploaded_file = st.file_uploader("📤 Envie um print do gráfico da IQ Option")
 user_text = st.text_area("✍️ Detalhe aqui sua análise ou observações")
 
 if uploaded_file:
-    user_image = Image.open(uploaded_file)
-    st.image(user_image, caption="📊 Seu gráfico enviado", use_column_width=True)
+    image = Image.open(uploaded_file)
+    st.image(image, caption="📊 Seu gráfico enviado", use_column_width=True)
 
 if user_text:
     st.subheader("📝 Observações do Usuário")
     st.write(user_text)
 
 # ---------------------------
-# Candle do GitHub
-# ---------------------------
-st.subheader("📈 Candle Analisado")
-url = "https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg"
-response = requests.get(url)
-image = Image.open(BytesIO(response.content))
-st.image(image, caption="Candle Analisado", use_column_width=True)
-
-# ---------------------------
 # Botão para gerar sinais
 # ---------------------------
 if st.button("🚀 Gerar Sinais"):
-    # Lista de sinais de exemplo; futuramente pode vir de API
-    sinais_base = [
-        {"Horário": "08:00:00", "Par": "EUR/USD", "Ação": "Comprar"},
-        {"Horário": "08:15:00", "Par": "USD/JPY", "Ação": "Vender"},
-        {"Horário": "08:30:00", "Par": "GBP/USD", "Ação": "Comprar"}
-    ]
+    # Dados de exemplo (futuramente integrados à IA)
+    data = {
+        "Horário": ["10:01:05", "10:03:15", "10:05:20"],
+        "Par": ["EUR/USD", "USD/JPY", "GBP/USD"],
+        "Ação": ["Comprar", "Vender", "Comprar"],
+        "Acerto (%)": [92, 88, 95]
+    }
 
-    df = pd.DataFrame(sinais_base)
-    # Calcular Acerto (%)
-    df["Acerto (%)"] = df["Par"].apply(lambda x: calcular_acerto(None))
+    df = pd.DataFrame(data)
 
-    # Aplicar estilo
-    styled_df = df.style.applymap(color_action, subset=['Ação']) \
-                        .set_properties(**{'color': '#FFD700', 'background-color': '#000000'})
+    # Função para colorir colunas
+    def highlight_actions(val):
+        if val == "Comprar":
+            return "color: lime; font-weight: bold"
+        elif val == "Vender":
+            return "color: red; font-weight: bold"
+        return ""
 
-    # Mostrar tabela
+    styled_df = df.style.map(highlight_actions, subset=["Ação"])
     st.subheader("📊 Sinais Gerados")
-    st.dataframe(styled_df)
+    st.dataframe(styled_df, use_container_width=True)
