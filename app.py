@@ -70,7 +70,8 @@ if st.button("🚀 Gerar Sinais"):
         "Acerto (%)": [92, 88, 95]
     }
 
-    df = pd.DataFrame(data)
+    # Ajustar ordem das colunas → % sempre no final
+    df = pd.DataFrame(data, columns=["Horário", "Par", "Ação", "Acerto (%)"])
 
     # Função para colorir colunas
     def highlight_actions(val):
@@ -83,3 +84,15 @@ if st.button("🚀 Gerar Sinais"):
     styled_df = df.style.map(highlight_actions, subset=["Ação"])
     st.subheader("📊 Sinais Gerados")
     st.dataframe(styled_df, use_container_width=True)
+
+# ---------------------------
+# Dicas finais
+# ---------------------------
+st.markdown("---")
+st.subheader("💡 Dicas para Melhor Aproveitamento")
+st.markdown("""
+- ✅ Use os sinais em períodos de maior liquidez (abertura de Londres e Nova York).  
+- ✅ Sempre respeite o gerenciamento de risco.  
+- ✅ Combine os sinais com sua própria leitura de gráfico.  
+- ✅ Evite operar em notícias de alto impacto.  
+""")
