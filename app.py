@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
+from openai import OpenAI
 
 # ---------------------------
 # Configuração da página
@@ -42,7 +43,7 @@ st.markdown(page_bg, unsafe_allow_html=True)
 # Cabeçalho
 # ---------------------------
 st.title("💹 LucroCerto FX")
-st.markdown("### 🚀 Scalping de Alta Precisão em Forex")
+st.markdown("### 🚀 Forex com IA em Tempo Real")
 
 # ---------------------------
 # Upload e observações
@@ -59,10 +60,16 @@ if user_text:
     st.write(user_text)
 
 # ---------------------------
+# Chave da OpenAI
+# ---------------------------
+openai_api_key = st.secrets.get("OPENAI_API_KEY", None)
+client = OpenAI(api_key=openai_api_key) if openai_api_key else None
+
+# ---------------------------
 # Botão para gerar sinais
 # ---------------------------
 if st.button("🚀 Gerar Sinais"):
-    # Dados de exemplo (futuramente integrados à IA)
+    # Dados de exemplo (depois a IA pode gerar isso também)
     data = {
         "Horário": ["10:01:05", "10:03:15", "10:05:20"],
         "Par": ["EUR/USD", "USD/JPY", "GBP/USD"],
@@ -70,7 +77,6 @@ if st.button("🚀 Gerar Sinais"):
         "Acerto (%)": [92, 88, 95]
     }
 
-    # Ajustar ordem das colunas → % sempre no final
     df = pd.DataFrame(data, columns=["Horário", "Par", "Ação", "Acerto (%)"])
 
     # Função para colorir colunas
@@ -85,14 +91,40 @@ if st.button("🚀 Gerar Sinais"):
     st.subheader("📊 Sinais Gerados")
     st.dataframe(styled_df, use_container_width=True)
 
-# ---------------------------
-# Dicas finais
-# ---------------------------
-st.markdown("---")
-st.subheader("💡 Dicas para Melhor Aproveitamento")
-st.markdown("""
-- ✅ Use os sinais em períodos de maior liquidez (abertura de Londres e Nova York).  
-- ✅ Sempre respeite o gerenciamento de risco.  
-- ✅ Combine os sinais com sua própria leitura de gráfico.  
-- ✅ Evite operar em notícias de alto impacto.  
-""")
+    # ---------------------------
+    # Geração de dicas inteligentes via IA
+    # ---------------------------
+    if client:
+        signals_text = df.to_string(index=False)
+        user_notes = user_text if user_text else "Nenhuma observação"
+
+        prompt = f"""
+        Você é um assistente especializado em Forex.
+        O usuário acabou de gerar sinais de scalping.
+        Aqui estão os sinais:
+
+        {signals_text}
+
+        Observações do usuário:
+        {user_notes}
+
+        Gere 3 a 4 dicas curtas e práticas, em português, personalizadas
+        para este cenário. Seja direto e útil, nada genérico.
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Você é um trader profissional especialista em Forex scalping."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=200,
+            temperature=0.7
+        )
+
+        dicas = response.choices[0].message.content
+        st.markdown("---")
+        st.subheader("💡 Dicas Inteligentes (IA)")
+        st.markdown(dicas)
+    else:
+        st.warning("⚠️ Configure sua chave da OpenAI em `st.secrets['OPENAI_API_KEY']` para ativar as dicas inteligentes.")
