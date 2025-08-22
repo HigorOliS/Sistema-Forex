@@ -5,7 +5,7 @@ from PIL import Image
 from io import BytesIO
 
 # ---------------------------
-# URL da imagem do GitHub
+# URL da imagem (opcional para destaque)
 # ---------------------------
 img_url = "https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg"
 
@@ -15,21 +15,60 @@ img_url = "https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_38
 try:
     response = requests.get(img_url)
     img = Image.open(BytesIO(response.content))
+    st.image(img, caption="📊 Gráfico carregado do GitHub")
 except Exception as e:
     st.error(f"Erro ao carregar a imagem: {e}")
 
 # ---------------------------
-# Configuração do background
+# Estilo personalizado (preto + dourado)
 # ---------------------------
 st.markdown(
-    f"""
+    """
     <style>
-    .stApp {{
-        background-image: url("{img_url}");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }}
+    .stApp {
+        background-color: #000000; /* Fundo preto */
+        background-image: linear-gradient(to bottom right, #000000, #111111);
+        color: #FFD700; /* Texto dourado */
+    }
+    h1, h2, h3, h4 {
+        color: #FFD700 !important; /* Títulos dourados */
+        text-shadow: 1px 1px 2px #000;
+    }
+    .stButton button {
+        background-color: #FFD700;
+        color: black;
+        border-radius: 8px;
+        border: none;
+        padding: 0.5em 1em;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .stButton button:hover {
+        background-color: black;
+        color: #FFD700;
+        border: 1px solid #FFD700;
+    }
+    textarea, .stTextInput, .stFileUploader {
+        background-color: #111111 !important;
+        color: #FFD700 !important;
+        border-radius: 6px;
+    }
+    table {
+        background-color: #000000 !important;
+        color: #FFD700 !important;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th {
+        background-color: #222222 !important;
+        color: #FFD700 !important;
+        padding: 8px;
+    }
+    td {
+        background-color: #111111 !important;
+        color: #FFD700 !important;
+        padding: 8px;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -42,7 +81,7 @@ st.title("💹 LucroCerto FX")
 st.header("💡 Otimize sua Análise")
 
 # ---------------------------
-# Upload de arquivo e texto
+# Upload e observações
 # ---------------------------
 uploaded_file = st.file_uploader("📤 Envie um print do gráfico da IQ Option")
 user_text = st.text_area("✍️ Detalhe aqui sua análise ou observações")
@@ -50,23 +89,22 @@ user_text = st.text_area("✍️ Detalhe aqui sua análise ou observações")
 # ---------------------------
 # Botão para gerar análise
 # ---------------------------
-if st.button("✅ Gerar Análise"):
-    # Dados de exemplo
+if st.button("✨ Gerar Análise"):
     data = {
         "Par": ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD"],
         "Horário": ["10:32:15", "06:15:45", "22:47:30", "04:12:59", "21:03:12"],
         "Ação": [
-            '<span style="color:green">Comprar</span>',
+            '<span style="color:lime">Comprar</span>',
             '<span style="color:red">Vender</span>',
-            '<span style="color:green">Comprar</span>',
+            '<span style="color:lime">Comprar</span>',
             '<span style="color:red">Vender</span>',
-            '<span style="color:green">Comprar</span>'
+            '<span style="color:lime">Comprar</span>'
         ],
-        "% WIN": [92, 89, 94, 90, 91]
+        "Probabilidade (%)": [92, 89, 94, 90, 91]
     }
     
     df = pd.DataFrame(data)
-    
+
     st.markdown("## 📈 Resultados da Análise")
     st.write(df.to_html(escape=False), unsafe_allow_html=True)
 
