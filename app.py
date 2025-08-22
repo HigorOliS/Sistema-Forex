@@ -31,49 +31,23 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------
-# Tabela de sinais Forex
-# ---------------------------
-data = {
-    "Horário": ["08:00:00", "08:15:00", "08:30:00"],
-    "Par": ["EUR/USD", "USD/JPY", "GBP/USD"],
-    "Ação": ["Comprar", "Vender", "Comprar"],  # Português
-    "Acerto (%)": [92, 88, 95]
-}
-
-df = pd.DataFrame(data)
-
-# ---------------------------
 # Função placeholder de IA para calcular acerto
 # ---------------------------
 def calcular_acerto(candle_image=None):
     return 90  # Exemplo fixo
 
-df["Acerto (%)"] = df["Par"].apply(lambda x: calcular_acerto(None))
-
 # ---------------------------
-# Colorir Comprar/Vender dinamicamente
+# Função para colorir Comprar/Vender
 # ---------------------------
 def color_action(val):
     color = 'green' if val == "Comprar" else 'red'
     return f'background-color: {color}; color: black; font-weight: bold'
 
-# Aplicar estilo
-styled_df = df.style.applymap(color_action, subset=['Ação']) \
-                    .set_properties(**{'color': '#FFD700', 'background-color': '#000000'})
-
-# Mostrar tabela estilizada
+# ---------------------------
+# Cabeçalho
+# ---------------------------
 st.title("📊 LucroCerto FX - Scalping")
 st.subheader("Tabela de sinais com Acerto (%)")
-st.dataframe(styled_df)
-
-# ---------------------------
-# Mostrar candles/análises gráficas do GitHub
-# ---------------------------
-st.subheader("📈 Candle Analisado")
-url = "https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg"
-response = requests.get(url)
-image = Image.open(BytesIO(response.content))
-st.image(image, caption="Candle Analisado", use_column_width=True)
 
 # ---------------------------
 # Upload e observações do usuário
@@ -91,11 +65,33 @@ if user_text:
     st.write(user_text)
 
 # ---------------------------
-# Informações adicionais
+# Candle do GitHub
 # ---------------------------
-st.markdown("""
-    ### ⚡ Observações:
-    - Comprar = verde, Vender = vermelho
-    - Coluna "Acerto (%)" calculada por IA (placeholder)
-    - Layout preto com detalhes dourados
-""")
+st.subheader("📈 Candle Analisado")
+url = "https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg"
+response = requests.get(url)
+image = Image.open(BytesIO(response.content))
+st.image(image, caption="Candle Analisado", use_column_width=True)
+
+# ---------------------------
+# Botão para gerar sinais
+# ---------------------------
+if st.button("🚀 Gerar Sinais"):
+    # Lista de sinais de exemplo; futuramente pode vir de API
+    sinais_base = [
+        {"Horário": "08:00:00", "Par": "EUR/USD", "Ação": "Comprar"},
+        {"Horário": "08:15:00", "Par": "USD/JPY", "Ação": "Vender"},
+        {"Horário": "08:30:00", "Par": "GBP/USD", "Ação": "Comprar"}
+    ]
+
+    df = pd.DataFrame(sinais_base)
+    # Calcular Acerto (%)
+    df["Acerto (%)"] = df["Par"].apply(lambda x: calcular_acerto(None))
+
+    # Aplicar estilo
+    styled_df = df.style.applymap(color_action, subset=['Ação']) \
+                        .set_properties(**{'color': '#FFD700', 'background-color': '#000000'})
+
+    # Mostrar tabela
+    st.subheader("📊 Sinais Gerados")
+    st.dataframe(styled_df)
