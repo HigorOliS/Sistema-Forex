@@ -1,83 +1,101 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
+import requests
+from io import BytesIO
 
 # ---------------------------
 # Configuração da página
 # ---------------------------
-st.set_page_config(page_title="LucroCerto FX", layout="wide")
-
-# Fundo com imagem escurecida
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-image: linear-gradient(
-            rgba(0, 0, 0, 0.75),
-            rgba(0, 0, 0, 0.75)
-        ), url("https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }
-    table {
-        background-color: rgba(0,0,0,0.6);
-        color: white;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
+st.set_page_config(
+    page_title="LucroCerto FX",
+    page_icon="💹",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-st.title("💹 LucroCerto FX")
+# ---------------------------
+# Estilo customizado (preto/dourado)
+# ---------------------------
+st.markdown("""
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFD700;
+        }
+        .stButton>button {
+            background-color: #FFD700;
+            color: #000000;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # ---------------------------
-# Upload e observações
+# Tabela de sinais Forex
 # ---------------------------
+data = {
+    "Horário": ["08:00:00", "08:15:00", "08:30:00"],
+    "Par": ["EUR/USD", "USD/JPY", "GBP/USD"],
+    "Ação": ["Comprar", "Vender", "Comprar"],  # Português
+    "Acerto (%)": [92, 88, 95]
+}
+
+df = pd.DataFrame(data)
+
+# ---------------------------
+# Função placeholder de IA para calcular acerto
+# ---------------------------
+def calcular_acerto(candle_image=None):
+    return 90  # Exemplo fixo
+
+df["Acerto (%)"] = df["Par"].apply(lambda x: calcular_acerto(None))
+
+# ---------------------------
+# Colorir Comprar/Vender dinamicamente
+# ---------------------------
+def color_action(val):
+    color = 'green' if val == "Comprar" else 'red'
+    return f'background-color: {color}; color: black; font-weight: bold'
+
+# Aplicar estilo
+styled_df = df.style.applymap(color_action, subset=['Ação']) \
+                    .set_properties(**{'color': '#FFD700', 'background-color': '#000000'})
+
+# Mostrar tabela estilizada
+st.title("📊 LucroCerto FX - Scalping")
+st.subheader("Tabela de sinais com Acerto (%)")
+st.dataframe(styled_df)
+
+# ---------------------------
+# Mostrar candles/análises gráficas do GitHub
+# ---------------------------
+st.subheader("📈 Candle Analisado")
+url = "https://raw.githubusercontent.com/HigorOliS/Sistema-Forex/main/IMG_3894.jpeg"
+response = requests.get(url)
+image = Image.open(BytesIO(response.content))
+st.image(image, caption="Candle Analisado", use_column_width=True)
+
+# ---------------------------
+# Upload e observações do usuário
+# ---------------------------
+st.subheader("📤 Envie seu gráfico ou observações")
 uploaded_file = st.file_uploader("📤 Envie um print do gráfico da IQ Option")
 user_text = st.text_area("✍️ Detalhe aqui sua análise ou observações")
 
 if uploaded_file:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="📊 Seu gráfico enviado", use_column_width=True)
+    user_image = Image.open(uploaded_file)
+    st.image(user_image, caption="📊 Seu gráfico enviado", use_column_width=True)
 
 if user_text:
     st.subheader("📝 Observações do Usuário")
     st.write(user_text)
 
 # ---------------------------
-# Botão para gerar análise
+# Informações adicionais
 # ---------------------------
-if st.button("🚀 Gerar Análise"):
-    # Dados fictícios de exemplo (simulação)
-    data = {
-        "Par": ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD"],
-        "Horário": ["10:32:15", "06:15:45", "22:47:30", "04:12:59", "21:03:12"],
-        "Ação": ["Comprar", "Vender", "Comprar", "Vender", "Comprar"],
-        "Acerto(%)": [92, 89, 94, 90, 91]
-    }
-    df = pd.DataFrame(data)
-
-    # Função para aplicar cor automaticamente
-    def color_action(val):
-        if val == "Comprar":
-            return "color: lime; font-weight: bold;"
-        elif val == "Vender":
-            return "color: red; font-weight: bold;"
-        return ""
-
-    styled_df = df.style.applymap(color_action, subset=["Ação"])
-
-    # Mostrar tabela
-    st.markdown("## 📈 Resultados da Análise")
-    st.write(styled_df.to_html(escape=False), unsafe_allow_html=True)
-
-    # Dicas de horários
-    st.markdown("## 💡 Dicas de Horários")
-    st.write("""
-    - **EUR/USD** → Mais preciso entre **10:00 e 12:00 (GMT-3)**.
-    - **GBP/USD** → Movimentos fortes entre **05:30 e 07:00**.
-    - **USD/JPY** → Boa volatilidade entre **22:00 e 23:30**.
-    - **AUD/USD** → Melhor liquidez às **21:00 (abertura Sydney)**.
-    - **USD/CHF** → Melhor momento entre **04:00 e 05:00**.
-    """)
+st.markdown("""
+    ### ⚡ Observações:
+    - Comprar = verde, Vender = vermelho
+    - Coluna "Acerto (%)" calculada por IA (placeholder)
+    - Layout preto com detalhes dourados
+""")
