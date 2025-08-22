@@ -48,7 +48,7 @@ if user_text:
 # ---------------------------
 # Botão para gerar análise
 # ---------------------------
-if st.button("Gerar Análise"):
+if st.button("🚀 Gerar Análise"):
     # Dados fictícios de exemplo (simulação)
     data = {
         "Par": ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD"],
