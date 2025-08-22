@@ -54,7 +54,7 @@ if st.button("🚀 Gerar Análise"):
         "Par": ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD"],
         "Horário": ["10:32:15", "06:15:45", "22:47:30", "04:12:59", "21:03:12"],
         "Ação": ["Comprar", "Vender", "Comprar", "Vender", "Comprar"],
-        "Acerto (%)": [92, 89, 94, 90, 91]
+        "Acerto(%)": [92, 89, 94, 90, 91]
     }
     df = pd.DataFrame(data)
 
