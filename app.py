@@ -74,7 +74,6 @@ if uploaded_file:
 # Função principal do app
 # ---------------------------
 def main():
-    st.text("📊 LucroCerto FX - Assistente Forex com IA")
 
     st.write("Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
 
