@@ -76,7 +76,7 @@ if uploaded_file:
 def main():
 
     # Pergunta
-    user_input = st.text_input("Digite sua pergunta:", "Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
+    user_input = st.text_input("Digite sua pergunta:")
 
     # Botão para consultar IA
     if st.button("🚀 Consultar IA"):
