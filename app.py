@@ -75,10 +75,8 @@ if uploaded_file:
 # ---------------------------
 def main():
 
-    st.write("Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
-
     # Pergunta
-    user_input = st.text_input("Digite sua pergunta:", "Qual a melhor entrada para EUR/USD agora?")
+    user_input = st.text_input("Digite sua pergunta:", "Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
 
     # Botão para consultar IA
     if st.button("🚀 Consultar IA"):
