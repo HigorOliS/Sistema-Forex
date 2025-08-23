@@ -22,7 +22,7 @@ response = openai.chat.completions.create(
 )
 
 result = response.choices[0].message.content
-st.write(result.encode("utf-8").decode("utf-8"))
+st.text(response.choices[0].message.content)
 
 
 # ---------------------------
