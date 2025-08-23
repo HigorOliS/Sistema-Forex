@@ -81,7 +81,7 @@ def main():
     user_input = st.text_input("Digite sua pergunta:", "Qual a melhor entrada para EUR/USD agora?")
 
     # Botão para consultar IA
-    if st.button("Consultar IA"):
+    if st.button("🚀 Consultar IA"):
         try:
             response = openai.chat.completions.create(
                 model="gpt-3.5-turbo",
