@@ -21,7 +21,8 @@ response = openai.chat.completions.create(
     ]
 )
 
-st.write(response.choices[0].message.content)
+result = response.choices[0].message.content
+st.write(result.encode("utf-8").decode("utf-8"))
 
 
 # ---------------------------
