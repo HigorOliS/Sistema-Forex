@@ -27,9 +27,10 @@ def main():
 
     st.write("Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
 
-    # Caixa de entrada do usuário
+    # Pergunta
     user_input = st.text_input("Digite sua pergunta:", "Qual a melhor entrada para EUR/USD agora?")
 
+    # Botão para consultar IA
     if st.button("Consultar IA"):
         try:
             response = openai.chat.completions.create(
@@ -40,11 +41,10 @@ def main():
                 ]
             )
 
-            # Pega a resposta do modelo
             result = response.choices[0].message.content
 
-            # Exibe no Streamlit com Markdown (mais bonito e formatado)
-            st.markdown(result)
+            # Caixa de detalhes já preenchida com a resposta
+            st.text_area("Detalhe aqui sua análise ou observação", value=result, height=250)
 
         except Exception as e:
             st.error(f"Erro na consulta à API: {e}")
@@ -54,8 +54,6 @@ def main():
 # ---------------------------
 if __name__ == "__main__":
     main()
-
-
 # ---------------------------
 # Configuração da página
 # ---------------------------
