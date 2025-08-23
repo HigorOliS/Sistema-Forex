@@ -20,41 +20,6 @@ else:
     st.error("API Key não encontrada!")
 
 # ---------------------------
-# Função principal do app
-# ---------------------------
-def main():
-    st.title("📊 LucroCerto FX - Assistente Forex com IA")
-
-    st.write("Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
-
-    # Pergunta
-    user_input = st.text_input("Digite sua pergunta:", "Qual a melhor entrada para EUR/USD agora?")
-
-    # Botão para consultar IA
-    if st.button("Consultar IA"):
-        try:
-            response = openai.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "Você é um assistente especialista em Forex."},
-                    {"role": "user", "content": user_input}
-                ]
-            )
-
-            result = response.choices[0].message.content
-
-            # Caixa de detalhes já preenchida com a resposta
-            st.text_area("Detalhe aqui sua análise ou observação", value=result, height=250)
-
-        except Exception as e:
-            st.error(f"Erro na consulta à API: {e}")
-
-# ---------------------------
-# Rodar app
-# ---------------------------
-if __name__ == "__main__":
-    main()
-# ---------------------------
 # Configuração da página
 # ---------------------------
 st.set_page_config(
@@ -100,15 +65,46 @@ st.markdown("### 🚀 Forex com IA em Tempo Real")
 # Upload e observações
 # ---------------------------
 uploaded_file = st.file_uploader("📤 Envie um print do gráfico da IQ Option")
-user_text = st.text_area("✍️ Detalhe aqui sua análise ou observações")
 
 if uploaded_file:
     image = Image.open(uploaded_file)
     st.image(image, caption="📊 Seu gráfico enviado", use_column_width=True)
+    
+# ---------------------------
+# Função principal do app
+# ---------------------------
+def main():
+    st.text("📊 LucroCerto FX - Assistente Forex com IA")
 
-if user_text:
-    st.subheader("📝 Observações do Usuário")
-    st.write(user_text)
+    st.write("Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
+
+    # Pergunta
+    user_input = st.text_input("Digite sua pergunta:", "Qual a melhor entrada para EUR/USD agora?")
+
+    # Botão para consultar IA
+    if st.button("Consultar IA"):
+        try:
+            response = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "Você é um assistente especialista em Forex."},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+
+            result = response.choices[0].message.content
+
+            # Caixa de detalhes já preenchida com a resposta
+            st.text_area("Detalhe aqui sua análise ou observação", value=result, height=250)
+
+        except Exception as e:
+            st.error(f"Erro na consulta à API: {e}")
+
+# ---------------------------
+# Rodar app
+# ---------------------------
+if __name__ == "__main__":
+    main()
 
 # ---------------------------
 # Chave da OpenAI
