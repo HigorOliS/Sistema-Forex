@@ -4,7 +4,25 @@ from PIL import Image
 import openai
 import streamlit as st
 
+# Pega a chave da API do secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+# Teste rápido (pode remover depois)
+if openai.api_key:
+    st.success("API Key carregada com sucesso!")
+else:
+    st.error("API Key não encontrada!")
+
+response = openai.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "Você é um assistente especialista em Forex."},
+        {"role": "user", "content": "Qual a melhor entrada para EUR/USD agora?"}
+    ]
+)
+
+st.write(response.choices[0].message.content)
+
 
 # ---------------------------
 # Configuração da página
