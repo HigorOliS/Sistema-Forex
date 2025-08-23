@@ -4,25 +4,56 @@ from PIL import Image
 import openai
 import streamlit as st
 
-# Pega a chave da API do secrets
+# ---------------------------
+# Configuração da página
+# ---------------------------
+st.set_page_config(page_title="LucroCerto FX", layout="wide")
+
+# ---------------------------
+# Carregar API Key
+# ---------------------------
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# Teste rápido (pode remover depois)
 if openai.api_key:
     st.success("API Key carregada com sucesso!")
 else:
     st.error("API Key não encontrada!")
 
-response = openai.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "Você é um assistente especialista em Forex."},
-        {"role": "user", "content": "Qual a melhor entrada para EUR/USD agora?"}
-    ]
-)
+# ---------------------------
+# Função principal do app
+# ---------------------------
+def main():
+    st.title("📊 LucroCerto FX - Assistente Forex com IA")
 
-result = response.choices[0].message.content
-st.text(response.choices[0].message.content)
+    st.write("Este é o seu assistente inteligente para ajudar no Forex em tempo real.")
+
+    # Caixa de entrada do usuário
+    user_input = st.text_input("Digite sua pergunta:", "Qual a melhor entrada para EUR/USD agora?")
+
+    if st.button("Consultar IA"):
+        try:
+            response = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "Você é um assistente especialista em Forex."},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+
+            # Pega a resposta do modelo
+            result = response.choices[0].message.content
+
+            # Exibe no Streamlit com Markdown (mais bonito e formatado)
+            st.markdown(result)
+
+        except Exception as e:
+            st.error(f"Erro na consulta à API: {e}")
+
+# ---------------------------
+# Rodar app
+# ---------------------------
+if __name__ == "__main__":
+    main()
 
 
 # ---------------------------
