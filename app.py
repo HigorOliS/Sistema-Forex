@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 import openai
+import streamlit as st
+
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # ---------------------------
 # Configuração da página
