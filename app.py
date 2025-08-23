@@ -76,7 +76,7 @@ if uploaded_file:
 def main():
 
     # Pergunta
-    user_input = st.text_input("Pergunte para IA 🧠")
+    user_input = st.text_input("🧠 Pergunte para IA")
 
     # Botão para consultar IA
     if st.button("🚀 Consultar IA"):
