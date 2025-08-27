@@ -1,20 +1,18 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-import openai
+from openai import OpenAI
 
 # ---------------------------
 # Configuração da página
 # ---------------------------
-st.set_page_config(page_title="LucroCerto FX", page_icon="💹", layout="centered")
+st.set_page_config(page_title="Assistente Forex com IA", page_icon="📈", layout="wide")
+
+# Conexão com a API da OpenAI
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # ---------------------------
-# Chave da API da OpenAI
-# ---------------------------
-openai.api_key = st.secrets.get("OPENAI_API_KEY", None)
-
-# ---------------------------
-# Layout principal
+# Layout Principal (mantido no estilo original)
 # ---------------------------
 st.markdown(
     """
@@ -23,89 +21,59 @@ st.markdown(
     Este é o seu assistente inteligente para ajudar no Forex em tempo real.
     </p>
     """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
 
 # ---------------------------
-# Entrada de pergunta
+# Caixa de pergunta principal
 # ---------------------------
-user_input = st.text_input("Digite sua pergunta:", placeholder="Qual a melhor entrada para EUR/USD agora?")
+pergunta = st.text_input("Digite sua pergunta:", "Qual a melhor entrada para EUR/USD agora?")
 
 if st.button("Consultar IA"):
-    if openai.api_key and user_input.strip():
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "Você é um trader profissional especialista em Forex scalping."},
-                {"role": "user", "content": user_input}
-            ],
-            max_tokens=200,
-            temperature=0.7
-        )
-        st.success(response.choices[0].message.content)
-    else:
-        st.warning("⚠️ Configure sua chave da OpenAI em `st.secrets['OPENAI_API_KEY']` para ativar esta função.")
+    with st.spinner("Consultando a IA..."):
+        try:
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "Você é um especialista em Forex e scalping. Responda de forma clara, direta e com foco em alta precisão."},
+                    {"role": "user", "content": pergunta}
+                ]
+            )
+            resultado = response.choices[0].message.content
+            st.markdown(f"✅ **Resposta da IA:**\n\n{resultado}")
+        except Exception as e:
+            st.error(f"Erro ao consultar IA: {e}")
 
 # ---------------------------
-# Upload de imagem (print gráfico)
+# Upload do gráfico
 # ---------------------------
-st.markdown("### 📤 Envie um print do gráfico da IQ Option")
-uploaded_file = st.file_uploader("Drag and drop file here", type=["png", "jpg", "jpeg"])
+st.markdown("### 📩 Envie um print do gráfico da IQ Option")
+uploaded_file = st.file_uploader("Arraste ou selecione o arquivo", type=["png", "jpg", "jpeg"])
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="📊 Gráfico enviado", use_column_width=True)
 
 # ---------------------------
-# Caixa de Detalhes + Assistente IA
+# Anotações / Observações
 # ---------------------------
 st.markdown("### 📝 Detalhe aqui sua análise ou observações")
-user_text = st.text_area("Assistente:", placeholder="Digite sua análise, observações ou peça dicas inteligentes...")
+observacoes = st.text_area("Escreva suas anotações aqui...")
 
 # ---------------------------
-# Exemplo de tabela de sinais
+# Geração de dicas inteligentes com IA
 # ---------------------------
-data = {
-    "Horário": ["10:00:05", "10:05:10", "10:10:20"],
-    "Ação": ["Buy", "Sell", "Buy"],
-    "Par": ["EUR/USD", "GBP/USD", "USD/JPY"],
-    "Probabilidade": ["92%", "90%", "95%"]
-}
-df = pd.DataFrame(data)
-
-st.markdown("### 📊 Sinais de Scalping (Exemplo)")
-st.dataframe(df, use_container_width=True)
-
-# ---------------------------
-# IA gera dicas inteligentes
-# ---------------------------
-if openai.api_key:
-    signals_text = df.to_string(index=False)
-    user_notes = user_text if user_text else "Nenhuma observação"
-
-    prompt = f"""
-    Você é um assistente especializado em Forex.
-    O usuário acabou de gerar sinais de scalping.
-    Aqui estão os sinais:
-
-    {signals_text}
-
-    Observações do usuário:
-    {user_notes}
-
-    Gere 3 a 4 dicas curtas e práticas, em português, personalizadas
-    para este cenário. Seja direto e útil, nada genérico.
-    """
-
-    response = openai.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "Você é um trader profissional especialista em Forex scalping."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=200,
-        temperature=0.7
-    )
-
-    dicas = response.choices[0].message.content
-    st.markdown("---")
-    st.subheader("💡 Dicas Inteligentes (IA)")
-    st.markdown(dicas)
-else:
-    st.warning("⚠️ Configure sua chave da OpenAI em `st.secrets['OPENAI_API_KEY']` para ativar as dicas inteligentes.")
+if observacoes:
+    with st.spinner("Gerando dicas inteligentes..."):
+        try:
+            dicas = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "Você é um especialista em Forex. Analise as observações do usuário e sugira 3 dicas práticas e estratégicas para melhorar suas entradas no mercado."},
+                    {"role": "user", "content": observacoes}
+                ]
+            )
+            st.subheader("💡 Dicas Inteligentes da IA")
+            st.markdown(dicas.choices[0].message.content)
+        except Exception as e:
+            st.error(f"Erro ao gerar dicas: {e}")
